@@ -13,7 +13,7 @@ export default function LoginButton({
 }: LoginButtonProps) {
   const router = useRouter();
   function clickHandler() {
-    router.push('/auth/login')
+    router.push("/auth/login");
   }
 
   return (
