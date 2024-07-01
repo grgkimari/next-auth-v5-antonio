@@ -32,12 +32,14 @@ export default function LoginForm() {
     },
   });
   function handleSubmit(values: z.infer<typeof LoginSchema>) {
+    console.log(`Handling form submission`)
     setFormError("");
     setFormSuccess("");
     startTransition(async () => {
       const data = await Login(values);
-      setFormError(data.error);
-      setFormSuccess(data.success);
+      console.log(`Data returned : ${JSON.stringify(data)}`)
+      setFormError(data?.error);
+      setFormSuccess(data?.success);
     });
   }
   return (
@@ -94,8 +96,8 @@ export default function LoginForm() {
           <Button type="submit" className="w-full" disabled={isPending}>
             Log in
           </Button>
-          {formSuccess && <FormSuccess message={formSuccess} />}
-          {formError && <FormError message={formError} />}
+           <FormSuccess message={formSuccess}/>
+          <FormError message={formError} />
         </form>
       </Form>
     </CardWrapper>
