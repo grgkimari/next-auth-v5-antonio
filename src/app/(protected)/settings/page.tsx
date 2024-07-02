@@ -5,6 +5,7 @@ export default async function SettingsPage() {
   return (
     <>
       <h1 className=" underline">Settings Page</h1>
+      <img src={session?.user.image || ""} alt="Profile Picture" className="w-24 h-24 rounded-full border-black border-2"/>
       <p>{JSON.stringify(session)}</p>
       <form
         action={async () => {

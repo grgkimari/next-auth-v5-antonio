@@ -19,8 +19,14 @@ import FormError from "../form-error";
 import FormSuccess from "../form-success";
 import Login from "@/actions/login";
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 
 export default function LoginForm() {
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get("error") === "OAuthAccountNotLinked"
+      ? "Email already in use."
+      : "";
   const [formError, setFormError] = useState<string | undefined>();
   const [formSuccess, setFormSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
@@ -32,12 +38,11 @@ export default function LoginForm() {
     },
   });
   function handleSubmit(values: z.infer<typeof LoginSchema>) {
-    console.log(`Handling form submission`)
+    
     setFormError("");
     setFormSuccess("");
     startTransition(async () => {
       const data = await Login(values);
-      console.log(`Data returned : ${JSON.stringify(data)}`)
       setFormError(data?.error);
       setFormSuccess(data?.success);
     });
@@ -97,7 +102,7 @@ export default function LoginForm() {
             Log in
           </Button>
            <FormSuccess message={formSuccess}/>
-          <FormError message={formError} />
+          <FormError message={formError || urlError} />
         </form>
       </Form>
     </CardWrapper>

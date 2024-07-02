@@ -1,6 +1,9 @@
 "use server";
 
 import { signIn } from "@/auth";
+import { getUserByEmail } from "@/data/user";
+import { sendVerificationEmail } from "@/lib/mail";
+import { generateVerificationToken } from "@/lib/tokens";
 import { defaultLoginRedirect } from "@/routes";
 import { LoginSchema } from "@/schemas";
 import { error } from "console";
@@ -15,6 +18,18 @@ export default async function Login(values: z.infer<typeof LoginSchema>) {
     return { error: "Invalid input detected" };
   }
   const { email, password } = validatedFields.data;
+  const existingUser = await getUserByEmail(email)
+
+  if(!existingUser || !existingUser.email || !existingUser.password){
+    return {error : "Email not found."}
+  }
+  if(!existingUser.emailVerified){
+    const newVerificationToken = await generateVerificationToken(existingUser.email)
+    if(newVerificationToken) {
+      await sendVerificationEmail(email, newVerificationToken?.token)
+    return {success : "Confirmation email sent."}}
+    else return {error : "Could not send email. Try logging in later."}
+  }
 
   try {
     await signIn("credentials", {

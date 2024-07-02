@@ -21,6 +21,7 @@ import { useState, useTransition } from "react";
 import Register from "@/actions/register";
 
 export default function RegisterForm() {
+  
   const [formError, setFormError] = useState<string | undefined>();
   const [formSuccess, setFormSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
@@ -114,8 +115,8 @@ export default function RegisterForm() {
           <Button type="submit" className="w-full" disabled={isPending}>
             Register
           </Button>
-          {formSuccess && <FormSuccess message={formSuccess} />}
-          {formError && <FormError message={formError} />}
+          <FormSuccess message={formSuccess} />
+          <FormError message={formError} />
         </form>
       </Form>
     </CardWrapper>
