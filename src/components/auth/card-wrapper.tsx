@@ -19,7 +19,7 @@ export default function CardWrapper({
   backButtonLabel,
 }: CardWrapperProps) {
   return (
-    <Card className="w-[400px] shadow-md">
+    <Card className="w-[400px] shadow-md r">
       <CardHeader>
         <Header label={headerLabel} />
       </CardHeader>

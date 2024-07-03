@@ -20,6 +20,7 @@ import FormSuccess from "../form-success";
 import Login from "@/actions/login";
 import { useState, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
+import BackButton from "./back-button";
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
@@ -98,6 +99,7 @@ export default function LoginForm() {
               }}
             />
           </div>
+          <BackButton href="/auth/reset-password" label="Forgot password?"/>
           <Button type="submit" className="w-full" disabled={isPending}>
             Log in
           </Button>

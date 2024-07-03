@@ -6,7 +6,6 @@ import { sendVerificationEmail } from "@/lib/mail";
 import { generateVerificationToken } from "@/lib/tokens";
 import { defaultLoginRedirect } from "@/routes";
 import { LoginSchema } from "@/schemas";
-import { error } from "console";
 import { AuthError } from "next-auth";
 
 import * as z from "zod";

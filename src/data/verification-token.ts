@@ -1,3 +1,4 @@
+
 import { db } from "@/lib/db"
 
 export async function getVerificationTokenByEmail(email:string) {
@@ -19,14 +20,17 @@ export async function getVerificationTokenByEmail(email:string) {
     }
 }
 export async function getVerificationTokenByToken(token:string) {
+    console.log(`Checking database for token : ${token}`)
     try {
         const verificationToken = await db.verificationToken.findFirst({
             where : {
                 token
             }
         })
+        console.log(`Token from db : ${verificationToken}`)
         return verificationToken
     } catch (error) {
+        console.log(`Error searching for token : ${error}`)
         return null
     }
 }
