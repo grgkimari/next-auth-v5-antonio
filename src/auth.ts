@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { db } from "./lib/db"
 import { getUserById } from "./data/user"
 import email from "next-auth/providers/email"
+import { getTwoFactorConfirmationByUserId } from "./data/two-factor-confirmation"
  
 type ExtendedUser = DefaultSession["user"] & {role : "ADMIN" | "USER"}
 
@@ -57,8 +58,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
 
     async signIn({user, account}){
+      
       if(account?.provider !== "credentials") return true
       const existingUser = await getUserById(user?.id || "")
+      if(existingUser?.twoFactorEnabled){
+        const existingTwoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id)
+        if(existingTwoFactorConfirmation){
+          await db.twoFactorConfirmation.delete({
+            where : {id : existingTwoFactorConfirmation.id}
+          })
+        }
+        else{
+          return false
+        }
+      }
       if(!existingUser?.emailVerified) return false
 
       return true

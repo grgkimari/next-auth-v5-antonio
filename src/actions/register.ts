@@ -9,7 +9,8 @@ import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
 
 export default async function Register(values: z.infer<typeof RegisterSchema>) {
-  const validatedFields = RegisterSchema.safeParse(values);
+  try {
+    const validatedFields = RegisterSchema.safeParse(values);
   if (!validatedFields.success) return { error: "Invalid input detected" };
 
   const { email, password, name } = validatedFields.data;
@@ -32,4 +33,9 @@ export default async function Register(values: z.infer<typeof RegisterSchema>) {
   }
 
   return { success: "Confirmation email sent!" };
+  } catch (error) {
+    console.log(`Error creating user: ${error}`)
+    return {error : "An unexpected error occurred"}
+  }
+  
 }

@@ -28,6 +28,8 @@ export default function LoginForm() {
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use."
       : "";
+  const [showTwoFactorCodeInputField, setshowTwoFactorCodeInputField] =
+    useState<boolean>(false);
   const [formError, setFormError] = useState<string | undefined>();
   const [formSuccess, setFormSuccess] = useState<string | undefined>();
   const [isPending, startTransition] = useTransition();
@@ -39,13 +41,20 @@ export default function LoginForm() {
     },
   });
   function handleSubmit(values: z.infer<typeof LoginSchema>) {
-    
     setFormError("");
     setFormSuccess("");
     startTransition(async () => {
       const data = await Login(values);
-      setFormError(data?.error);
-      setFormSuccess(data?.success);
+      if (data.error) {
+        form.reset();
+        setFormError(data?.error);
+      } else if (data.success) {
+        form.reset();
+        setFormSuccess(data?.success);
+      }
+      else if(data.twoFactor){
+        setshowTwoFactorCodeInputField(true)
+      }
     });
   }
   return (
@@ -58,7 +67,7 @@ export default function LoginForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <div className="space-y-4">
-            <FormField
+            {!showTwoFactorCodeInputField && <><FormField
               control={form.control}
               name="email"
               render={({ field }) => {
@@ -97,13 +106,35 @@ export default function LoginForm() {
                   </FormItem>
                 );
               }}
-            />
+            /></>}
+            {showTwoFactorCodeInputField && (
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>2FA code</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={isPending}
+                          {...field}
+                          placeholder="2FA code"
+                          type="text"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            )}
           </div>
-          <BackButton href="/auth/reset-password" label="Forgot password?"/>
+          <BackButton href="/auth/reset-password" label="Forgot password?" />
           <Button type="submit" className="w-full" disabled={isPending}>
-            Log in
+            {showTwoFactorCodeInputField ? "Confirm" : "Log in"}
           </Button>
-           <FormSuccess message={formSuccess}/>
+          <FormSuccess message={formSuccess} />
           <FormError message={formError || urlError} />
         </form>
       </Form>
