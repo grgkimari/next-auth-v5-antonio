@@ -1,20 +1,18 @@
-import { auth, signOut } from "@/auth";
+"use client"
 
-export default async function SettingsPage() {
-  const session = await auth();
+import { useCurrentUser } from "@/custom hooks/useCurrentUser";
+import { signOut, useSession } from "next-auth/react";
+
+export default  function SettingsPage() {
+  const user = useCurrentUser()
   return (
-    <>
-      <h1 className=" underline">Settings Page</h1>
-      <img src={session?.user.image || ""} alt="Profile Picture" className="w-24 h-24 rounded-full border-black border-2"/>
-      <p>{JSON.stringify(session)}</p>
-      <form
-        action={async () => {
-          "use server";
-          await signOut({redirectTo : "/"});
-        }}
-      >
-        <button type="submit" className="border-2 border-black m-2 p-2 rounded-xl">Log out</button>
-      </form>
-    </>
+    <div className="bg-white w-[600px] h-[600px] rounded-lg shadow-md flex flex-col justify-center items-center mt-2">
+<h1 className=" underline">Settings Page</h1>
+      
+      <p className="w-[90%] text-wrap break-words">{JSON.stringify(user)}</p>
+      
+        <button type="submit" className="border-2 border-black m-2 p-2 rounded-xl" onClick={() => signOut()}>Log out</button>
+    </div>
+    
   );
 }
